@@ -9,3 +9,6 @@ https://github.com/m5stack/M5StickC/tree/master/examples/Hat/RoverC .
 
 (This project is not standalone, it requires a raspberry pi with camera running vigibot
 https://github.com/vigibot/vigiclient )
+
+Please note that the M5Stack RoverC Plus crashes the ESP32 if the motors draw a lot of power (for example when changing direction)
+Issue is noted here https://github.com/m5stack/M5StickC/issues/140

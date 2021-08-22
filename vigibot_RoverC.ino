@@ -122,7 +122,7 @@ uint32_t lastTrameTimestamp = millis();
 uint32_t lastSleepBeacon, lastLcdLoop;
 uint32_t lcdOnUntil = 60000;
 int16_t motor[4], motor_overflow = 127;
-uint8_t idle;
+uint8_t under_pressure;
 float BatVoltage;
 
 WiFiServer server(7070);  //ESP server port
@@ -357,7 +357,7 @@ void loop() {
     }
 
     delay(0);
-    if (idle) {
+    if (!under_pressure) {
       //motor 0 FL
       Send_iic(0x00, motor[0]);
       delay(0);
@@ -374,6 +374,9 @@ void loop() {
       //servo gripper
       Send_iic(0x10, 90 - (trameRx.positions[1].x / 256)); //364
       delay(0);
+    }
+    if(under_pressure == 10){
+      Move_stop(0);
     }
 
     //LED
@@ -392,9 +395,11 @@ void loop() {
     writePiSerial();
     lastTrameTimestamp = millis();
     delay(0);
-    idle = 0;
+    if(under_pressure<254){
+      under_pressure++;
+    }
   } else {
-    idle = 1;
+    under_pressure = 0;
   }
   if ( millis() - lastTrameTimestamp > FAILSAFE ) {
     if ((millis() - lastSleepBeacon > 10000) ) { // every 10 seconds

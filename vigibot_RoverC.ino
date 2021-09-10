@@ -28,8 +28,8 @@
 #include <M5StickC.h>
 #include "RoverC.h"
 
-const char* ssid = "ssid";
-const char* pass = "pass";
+const char* ssid = "Loading...";
+const char* pass = "Roflmao42";
 // Set your Static IP address
 IPAddress local_IP(192, 168, 1, 64);
 // Set your Gateway IP address
@@ -146,9 +146,9 @@ void setup()
   RoverC_Init();
   Move_stop(0);
 
-  //pinMode(G10, OUTPUT);
-  //digitalWrite(G10, HIGH);
-  digitalWrite(M5_LED, HIGH);
+  pinMode(G10, OUTPUT);
+  digitalWrite(G10, HIGH);
+  //digitalWrite(M5_LED, HIGH);
   pinMode(G9, OUTPUT);//IR LED
   digitalWrite(G9, HIGH);
 
@@ -176,7 +176,7 @@ void setup()
   M5.Lcd.setTextColor(BLUE);
   M5.Lcd.setCursor(0, 30, 4);
   M5.Lcd.print("Wait Client");
-  digitalWrite(M5_LED, LOW);
+  digitalWrite(G10, LOW);
 
   // Port defaults to 3232
   // ArduinoOTA.setPort(3232);
@@ -270,7 +270,8 @@ void loop() {
     M5.Lcd.fillRect(0, 0, 160, 20, BLACK);
     M5.Lcd.setTextColor(GREEN);
     M5.Lcd.setCursor(0, 0, 2);
-    M5.Lcd.printf("M5: %.2f V, %.0f °C", BatVoltage, M5.Axp.GetTempInAXP192());
+    M5.Lcd.printf("M5: %.2f V, %.0f mA", BatVoltage, M5.Axp.GetBatCurrent());
+    //M5.Lcd.printf("M5: %.2f V, %.0f C", BatVoltage, M5.Axp.GetTempInAXP192());
     delay(0);
     M5.Lcd.fillRect(0, 60, 160, 20, BLACK);
     M5.Lcd.setTextColor(GREEN);
@@ -282,7 +283,7 @@ void loop() {
     lastLcdLoop = millis();
   }
 
-  if (M5.BtnB.isPressed()) {
+  if (M5.BtnB.isPressed()||M5.BtnA.isPressed()) {
     if (!lcdOnUntil) {
       M5.Axp.SetLDO2(1);
     }
@@ -290,7 +291,7 @@ void loop() {
     Move_forward(10);
     delay(1);
   }
-  if (M5.BtnB.wasReleased()) {
+  if (M5.BtnB.wasReleased()||M5.BtnA.wasReleased()) {
     Move_stop(0);
   }
 
@@ -381,9 +382,9 @@ void loop() {
 
     //LED
     if (trameTx.interrupteurs & 0b00000001) {
-      digitalWrite(M5_LED, LOW);
+      digitalWrite(G10, LOW);
     } else {
-      digitalWrite(M5_LED, HIGH);
+      digitalWrite(G10, HIGH);
     }
     //IR LED
     if (trameTx.interrupteurs & 0b00000010) {
